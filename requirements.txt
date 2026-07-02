@@ -1,0 +1,2 @@
+# MVP uses only Python standard library.
+# Keep this file for future dependencies, e.g. pandas/streamlit later.
