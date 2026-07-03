@@ -112,11 +112,34 @@ h2 {
 }
 
 .metric {
+  appearance: none;
   min-width: 76px;
   border: 1px solid #dde3dd;
   border-radius: 6px;
   padding: 7px 9px;
   background: #f8faf8;
+  border-left: 4px solid var(--metric-color, #65736d);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: background 140ms ease, border-color 140ms ease, opacity 140ms ease;
+}
+
+.metric:hover {
+  background: #eef5ef;
+  border-color: #c9d6cb;
+  border-left-color: var(--metric-color, #65736d);
+}
+
+.metric:focus-visible {
+  outline: 3px solid #b7cbbd;
+  outline-offset: 2px;
+}
+
+.metric.is-muted {
+  opacity: 0.48;
+  background: #f3f4f2;
+  border-left-color: #aab3ad;
 }
 
 .metric span {

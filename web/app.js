@@ -12,6 +12,7 @@
     rows: [],
     products: [],
     selectedProductId: null,
+    visiblePriceFields: Object.fromEntries(PRICE_FIELDS.map(({ field }) => [field, true])),
   };
 
   document.addEventListener("DOMContentLoaded", init);
@@ -210,19 +211,27 @@
     if (product.dateAdded) {
       parts.push(`added ${product.dateAdded}`);
     }
-    return parts.join(" · ");
+    return parts.join(" / ");
   }
 
   function renderLatestValues(row) {
     const target = document.getElementById("latestValues");
     target.innerHTML = "";
-    PRICE_FIELDS.forEach(({ field, label }) => {
+    PRICE_FIELDS.forEach(({ field, label, color }) => {
       const value = row ? row[field] : null;
-      const metric = document.createElement("div");
+      const metric = document.createElement("button");
       metric.className = "metric";
+      metric.type = "button";
+      metric.dataset.priceField = field;
+      metric.style.setProperty("--metric-color", color);
+      metric.setAttribute("aria-pressed", String(state.visiblePriceFields[field] !== false));
       metric.innerHTML = `<span>${label}</span><strong>${formatEuro(value)}</strong>`;
+      metric.addEventListener("click", () => {
+        togglePriceField(field);
+      });
       target.appendChild(metric);
     });
+    updatePriceToggleButtons();
   }
 
   function renderChart(rows) {
@@ -238,6 +247,7 @@
       series: PRICE_FIELDS.map(({ field, label }) => ({
         valueField: field,
         name: label,
+        visible: state.visiblePriceFields[field] !== false,
       })),
       argumentAxis: {
         argumentType: "datetime",
@@ -275,11 +285,15 @@
         visible: true,
       },
       onLegendClick: (event) => {
-        const series = event.target;
-        if (series.isVisible()) {
-          series.hide();
+        const field = findPriceFieldForSeries(event.target);
+        if (field) {
+          setPriceFieldVisibility(field, !event.target.isVisible(), event.target);
+          return;
+        }
+        if (event.target.isVisible()) {
+          event.target.hide();
         } else {
-          series.show();
+          event.target.show();
         }
       },
       export: {
@@ -288,10 +302,69 @@
     });
   }
 
+  function togglePriceField(field) {
+    setPriceFieldVisibility(field, state.visiblePriceFields[field] === false);
+  }
+
+  function setPriceFieldVisibility(field, isVisible, knownSeries) {
+    state.visiblePriceFields[field] = isVisible;
+    const chart = $("#priceChart").dxChart("instance");
+    const series = knownSeries || findChartSeries(field, chart);
+
+    if (series) {
+      if (isVisible) {
+        series.show();
+      } else {
+        series.hide();
+      }
+    }
+
+    updatePriceToggleButtons();
+  }
+
+  function findChartSeries(field, chart) {
+    if (!chart) {
+      return null;
+    }
+    const priceField = PRICE_FIELDS.find((item) => item.field === field);
+    if (!priceField) {
+      return null;
+    }
+    if (typeof chart.getSeriesByName === "function") {
+      const series = chart.getSeriesByName(priceField.label);
+      if (series) {
+        return series;
+      }
+    }
+    if (typeof chart.getAllSeries !== "function") {
+      return null;
+    }
+    return chart.getAllSeries().find((series) => findPriceFieldForSeries(series) === field) || null;
+  }
+
+  function findPriceFieldForSeries(series) {
+    if (!series) {
+      return null;
+    }
+    const options = typeof series.getOptions === "function" ? series.getOptions() : {};
+    const seriesName = series.name || options.name;
+    const seriesValueField = options.valueField;
+    const priceField = PRICE_FIELDS.find((item) => item.label === seriesName || item.field === seriesValueField);
+    return priceField ? priceField.field : null;
+  }
+
+  function updatePriceToggleButtons() {
+    document.querySelectorAll("[data-price-field]").forEach((button) => {
+      const isVisible = state.visiblePriceFields[button.dataset.priceField] !== false;
+      button.classList.toggle("is-muted", !isVisible);
+      button.setAttribute("aria-pressed", String(isVisible));
+    });
+  }
+
   function updateStatus(manifest) {
     const status = document.getElementById("statusPill");
     const latest = manifest.latestSnapshotDate || "no snapshots yet";
-    status.textContent = `${state.products.length} products · latest ${latest}`;
+    status.textContent = `${state.products.length} products / latest ${latest}`;
   }
 
   function showFatalError(error) {
