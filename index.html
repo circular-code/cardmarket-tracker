@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cardmarket Sealed Tracker</title>
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/26.1.3/css/dx.light.css">
+    <link rel="stylesheet" href="web/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Cardmarket Magic sealed tracker</p>
+          <h1>Collector Display Prices</h1>
+        </div>
+        <div class="status-pill" id="statusPill">Loading data</div>
+      </header>
+
+      <section class="controls" aria-label="Chart controls">
+        <label class="field">
+          <span>Collector display</span>
+          <div id="productSelect"></div>
+        </label>
+      </section>
+
+      <section class="chart-panel" id="chartPanel" hidden>
+        <div class="chart-header">
+          <div>
+            <h2 id="chartTitle">Price history</h2>
+            <p id="chartMeta"></p>
+          </div>
+          <div id="latestValues" class="latest-values"></div>
+        </div>
+        <div id="priceChart"></div>
+      </section>
+
+      <section class="empty-state" id="emptyState">
+        <h2>Select a collector display</h2>
+        <p>The chart appears after choosing a product from the list.</p>
+      </section>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn3.devexpress.com/jslib/26.1.3/js/dx.all.js"></script>
+    <script src="web/app.js"></script>
+  </body>
+</html>

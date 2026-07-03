@@ -176,6 +176,21 @@ def write_summary(snapshot_date: str, product_count: int, matched_price_count: i
     )
 
 
+def write_manifest(data_dir: Path, snapshot_date: str) -> None:
+    price_files = sorted(
+        str(path.relative_to(data_dir)).replace("\\", "/")
+        for path in (data_dir / "prices").glob("*.csv")
+    )
+    manifest = {
+        "updatedAt": dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat(),
+        "latestSnapshotDate": snapshot_date,
+        "priceFiles": price_files,
+        "productsFile": "products/relevant_products.csv",
+        "latestSnapshotFile": "latest_snapshot.csv",
+    }
+    (data_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", default="data", help="Target data directory")
@@ -238,6 +253,7 @@ def main() -> int:
     appended = append_price_rows(rows, prices_path)
     write_latest_snapshot(rows, data_dir / "latest_snapshot.csv")
     write_summary(snapshot_date, len(relevant_products), len(rows), appended, data_dir / "latest_summary.md")
+    write_manifest(data_dir, snapshot_date)
 
     print(f"Snapshot date: {snapshot_date}")
     print(f"Matched price rows: {len(rows)}")
