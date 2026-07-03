@@ -224,6 +224,8 @@
       metric.type = "button";
       metric.dataset.priceField = field;
       metric.style.setProperty("--metric-color", color);
+      metric.style.setProperty("--metric-soft-color", hexToRgba(color, 0.11));
+      metric.style.setProperty("--metric-hover-color", hexToRgba(color, 0.17));
       metric.setAttribute("aria-pressed", String(state.visiblePriceFields[field] !== false));
       metric.innerHTML = `<span>${label}</span><strong>${formatEuro(value)}</strong>`;
       metric.addEventListener("click", () => {
@@ -386,5 +388,14 @@
 
   function formatDate(value) {
     return new Intl.DateTimeFormat("en-CA").format(value);
+  }
+
+  function hexToRgba(hex, alpha) {
+    const normalized = hex.replace("#", "");
+    const value = Number.parseInt(normalized, 16);
+    const red = (value >> 16) & 255;
+    const green = (value >> 8) & 255;
+    const blue = value & 255;
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
   }
 })();

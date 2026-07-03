@@ -114,10 +114,10 @@ h2 {
 .metric {
   appearance: none;
   min-width: 76px;
-  border: 1px solid #dde3dd;
+  border: 1px solid var(--metric-color, #65736d);
   border-radius: 6px;
   padding: 7px 9px;
-  background: #f8faf8;
+  background: var(--metric-soft-color, #f8faf8);
   border-left: 4px solid var(--metric-color, #65736d);
   cursor: pointer;
   font: inherit;
@@ -126,8 +126,8 @@ h2 {
 }
 
 .metric:hover {
-  background: #eef5ef;
-  border-color: #c9d6cb;
+  background: var(--metric-hover-color, #eef5ef);
+  border-color: var(--metric-color, #65736d);
   border-left-color: var(--metric-color, #65736d);
 }
 
@@ -139,12 +139,13 @@ h2 {
 .metric.is-muted {
   opacity: 0.48;
   background: #f3f4f2;
+  border-color: #d7ddd8;
   border-left-color: #aab3ad;
 }
 
 .metric span {
   display: block;
-  color: #697871;
+  color: var(--metric-color, #697871);
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
