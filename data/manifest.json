@@ -1,7 +1,9 @@
 {
-  "updatedAt": null,
-  "latestSnapshotDate": null,
-  "priceFiles": [],
+  "updatedAt": "2026-07-04T07:26:59+00:00",
+  "latestSnapshotDate": "2026-07-04",
+  "priceFiles": [
+    "prices/2026.csv"
+  ],
   "productsFile": "products/relevant_products.csv",
   "latestSnapshotFile": "latest_snapshot.csv"
 }
