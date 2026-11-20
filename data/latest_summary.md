@@ -1,6 +1,6 @@
 # Latest Cardmarket Snapshot
 
-Snapshot date: `2026-11-19`
+Snapshot date: `2026-11-20`
 Relevant products: `55`
 Matched price rows: `55`
 New rows appended: `55`
